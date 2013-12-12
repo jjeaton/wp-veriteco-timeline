@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: youngbhs
+Contributors: jjeaton, youngbhs
 Tags: VeriteCo, timeline, custom post types
 Requires at least: 3.4
 Tested up to: 3.4.1
