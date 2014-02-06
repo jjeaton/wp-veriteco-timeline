@@ -357,7 +357,7 @@
 				$loop->the_post();
 				$entry = new wpvtEntry( $post );
 				
-				$string .= stripslashes($entry->toJSON());
+				$string .= $entry->toJSON();
 				
 				if($loop->current_post < $loop->post_count - 1) {
 					$string .= ',';
