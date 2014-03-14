@@ -2,16 +2,15 @@
 Contributors: jjeaton, youngbhs
 Tags: VeriteCo, timeline, custom post types
 Requires at least: 3.4
-Tested up to: 3.4.1
-Stable tag: trunk
+Tested up to: 3.8.1
+Stable tag: 1.1
 
 WP VeriteCo Timeline integrates VeriteCo's Timeline JS into the WordPress back-end.
 
 == Description ==
-WPVT integrates the wonderful JS plugin created by [VeriteCo](http://timeline.verite.co/ "Timeline JS") seamlessly into your WordPress back-end. It allows you to manage timeline entries through a Timeline custom post type. WPVT automatically generates the JSON data file from your database and styles it according to your settings.
+WPVT integrates the wonderful JS plugin created by [NU Knight Lab](http://timeline.knightlab.com/ "Timeline JS") seamlessly into your WordPress back-end. It allows you to manage timeline entries through a Timeline custom post type. WPVT automatically generates the JSON data file from your database and styles it according to your settings.
 
 Now creating a timeline is easier than ever with the WPVT shortcode.
-If you found the plugin useful, please visit the [author website](http://www.youngjyoon.com/2012/08/wp-veriteco-timeline-plugin/ "WPVT Notes") to donate the suggested $2.
 
 == Installation ==
 
@@ -21,11 +20,24 @@ If you found the plugin useful, please visit the [author website](http://www.you
 4. Create some timeline entries under `Timeline` custom post type
 5. Use shortcode `[WPVT]` in your page
 
-Visit [author website](http://www.youngjyoon.com/2012/08/wp-veriteco-timeline-plugin/ "WPVT Notes") for detailed discussion on timeline customization.
 
 == Frequently Asked Questions ==
-Visit [author website](http://www.youngjyoon.com/2012/08/wp-veriteco-timeline-plugin/ "WPVT Notes") for notes.
+
 
 == Changelog ==
+
+= 1.1 =
+
+* Fix: Allow arbitrary HTML content within posts (don't strip slashes from JSON) (props titaniumbones)
+* Enhancement: Updated timeline.js to v2.29.1 (props titaniumbones)
+* Info: Updated classes, please modify these if you've used them to style anything in your themes (Format: .old => .new) .vmm-timeline => .vco-timeline, .vmm-notouch => .vco-notouch, .container.main => .vco-container.vco-main, .feature => .vco-feature, .vmm-slider => .vco-slider, .navigation => .vco-navigation, .feedback => .vco-feedback
+
 = 1.0 =
-Initial Version.
+
+* Initial Version.
+
+== Upgrade Notice ==
+
+= 1.1 =
+
+* Info: Updated classes, please modify these if you've used them to style anything in your themes (Format: .old => .new) .vmm-timeline => .vco-timeline, .vmm-notouch => .vco-notouch, .container.main => .vco-container.vco-main, .feature => .vco-feature, .vmm-slider => .vco-slider, .navigation => .vco-navigation, .feedback => .vco-feedback

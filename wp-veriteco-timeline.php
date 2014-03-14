@@ -1,41 +1,40 @@
 <?php
 	/*
 	Plugin Name: WP VeriteCo Timeline
-	Plugin URI: http://www.youngjyoon.com
+	Plugin URI: http://www.josheaton.org/wordpress-plugins/wp-veriteco-timeline
 	Description: Internalizes VeriteCo Timeline Management into WordPress
-	Author: Young J. Yoon
-	Version: 1.0
-	Author URI: http://www.youngjyoon.com
+	Author: Josh Eaton, Young J. Yoon
+	Version: 1.1
+	Author URI: http://www.josheaton.org/
 	*/
-?>
-<?php
+
 	/* TIMELINE ENTRY CLASS */
-	class wpvtEntry 
+	class wpvtEntry
 	{
 		private $post_id;
-		
+
 		public $startDate;
 		public $endDate;
 		public $headline;
 		public $text;
 		public $asset;
-		
+
 		public function __construct( $post ) {
 			$this->post_id = $post->ID;
 			$meta = get_post_meta( $this->post_id );
-			
+
 			$this->startDate = $meta['wpvt_start_date'][0];
 			$this->endDate = $meta['wpvt_end_date'][0];
 			$this->headline = get_the_title( $this->post_id );
-			
+
 			$text = apply_filters('the_content', $post->post_content);
 			$text = preg_replace('/\v+|\\\[rn]/','',$text);
 			$text = $this->undoTexturize($text);
-			
+
 			$this->text = $text;
-			
+
 			$thumbnail_id = get_post_thumbnail_id( $this->post_id );
-			
+
 			if( $thumbnail_id ) {
 				// if there is featured image
 				$img = wp_get_attachment_image_src( $thumbnail_id, 'full' );
@@ -50,11 +49,11 @@
 				$this->asset->caption = $meta['wpvt_video_caption'][0];
 			}
 		}
-		
+
 		public function toJSON() {
 			return json_encode($this);
 		}
-		
+
 		public function undoTexturize($content, $deprecated = '') {
 			if ( !empty( $deprecated ) )
 				_deprecated_argument( __FUNCTION__, '0.71' );
@@ -75,13 +74,13 @@
 	}
 
 
-	/* Initailaize Back-end */	
+	/* Initailaize Back-end */
 	function wpvt_admin_init() {
 		wp_register_script( 'veriteco', plugins_url('js/timeline-min.js', __FILE__) );
 
 		wp_register_script( 'wpvt_custom', plugins_url('js/wpvt_custom.js', __FILE__) );
 		wp_register_style( 'wpvt_css', plugins_url('css/wpvt.css', __FILE__) );
-		
+
 		$page_title = "WP VeriteCo Timeline Configuration";
 		$menu_title = "WP Timeline";
 		$capability = "publish_posts";
@@ -89,19 +88,19 @@
 		$function = "wpvt_config_page";
 		$icon_url = "";
 		$position = "";
-		
+
 		add_options_page( $page_title, $menu_title, $capability, $menu_slug, $function );
-		
+
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery-ui-datepicker');
 		wp_enqueue_script('veriteco');
 		wp_enqueue_script('wpvt_custom');
-		
+
 		wp_enqueue_style('wpvt_css');
 	}
 	add_action('admin_menu', 'wpvt_admin_init');
-	
-	
+
+
 	/* Load Default Settings */
 	function wpvt_default_settings() {
 		$tmp = get_option('wpvt_options');
@@ -116,8 +115,8 @@
 		}
 	}
 	register_activation_hook(__FILE__, 'wpvt_default_settings');
-	
-	
+
+
 	/* Settings */
 	function wpvt_settings_init() {
 		$maptypes = array(
@@ -131,7 +130,7 @@
 			'HYBRID' => 'Google Maps: Hybrid',
 			'SATELLITE' => 'Google Maps: Satellite'
 		);
-		
+
 		$fonts = array(
 			'Bevan-PotanoSans' => 'Bevan &amp; Potano Sans',
 			'Merriweather-NewsCycle' => 'Merriweather &amp; News Cycle',
@@ -149,37 +148,37 @@
 			'Pacifico-Arimo' => 'Pacifico &amp; Arimo',
 			'PT' => 'PT Sans &amp; PT Narrow &amp; PT Serif'
 		);
-		
+
 		$types = array(
 			'default' => 'Default'
 		);
-		
+
 		add_settings_section('wpvt_id', '', 'wpvt_callback', 'wpvt_page');
-		
+
 		register_setting( 'wpvt_optiongroup', 'wpvt_options' ); // General Settings
-		
+
 		/* Add fields to cover page settings */
 		add_settings_field('headline', 'Cover Headline', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'headline', 'type' => 'text') );
 		add_settings_field('text', 'Cover Text', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'text', 'type' => 'text') );
 		add_settings_field('type', 'Timeline Type', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'type', 'type' => 'select', 'options' => $types ) );
-		
-		/* Add fields */		
+
+		/* Add fields */
 		add_settings_field('width', 'Width', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'width', 'type' => 'text') );
 		add_settings_field('height', 'Height', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'height', 'type' => 'text') );
 		add_settings_field('maptype', 'Map Type', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'map', 'type' => 'select', 'options' => $maptypes ) );
 		add_settings_field('font', 'Fonts', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'fonts', 'type' =>'select', 'options' => $fonts ) );
 		add_settings_field('start_at_end', 'Start at the end?', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'start_at_end', 'type' => 'checkbox', 'label' => 'Yes') );
-		add_settings_field('hash_bookmark', 'Hash Bookmarks?', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'hash_bookmark', 'type' => 'checkbox', 'label' => 'Yes') );		
+		add_settings_field('hash_bookmark', 'Hash Bookmarks?', 'wpvt_setting_string', 'wpvt_page', 'wpvt_id', array('id' => 'hash_bookmark', 'type' => 'checkbox', 'label' => 'Yes') );
 	}
 	add_action('admin_init', 'wpvt_settings_init');
-	
+
 		function wpvt_callback() { echo '<p>Adjust settings for the Timeline here.</p>'; }
 
 		function wpvt_setting_string( $args ) {
 			$options = get_option('wpvt_options');
 			$id = $args['id'];
 			$type = $args['type'];
-			
+
 			switch($type) {
 				case 'text':
 					$class = ($args['class']) ? ' class="'.$args['class'].'"' : '';
@@ -200,20 +199,20 @@
 					break;
 				default:
 					break;
-			}			
+			}
 		}
-	
-	/* Back-end Interface */	
+
+	/* Back-end Interface */
 	function wpvt_config_page() { ?>
 		<div class="wrap">
 			<div id="poststuff">
 				<div id="wpvt-icon"><br /></div>
 				<?php echo '<h1 class="wpvt-title">' . __( 'WP Veriteco Timeline Configuration', 'wpvt-config' ) . '</h1>'; ?>
 				<div class="clear"></div>
-				
+
 				<div class="postbox timeline-postbox">
 					<h3>Timeline Settings</h3>
-					
+
 					<div class="inside">
 						<form method="post" action="options.php">
 							<?php settings_fields( 'wpvt_optiongroup' ); ?>
@@ -225,7 +224,7 @@
 			</div><!-- #poststuff -->
 		</div>
 	<?php }
-	
+
 	/* Register custom post type */
 	function wpvt_post_type_init() {
 		$labels = array(
@@ -239,7 +238,7 @@
 			'view_item' => __('View Timeline Entry'),
 			'search_items' => __('Search Timeline Entries'),
 			'not_found' =>  __('No Timeline Entries found'),
-			'not_found_in_trash' => __('No Timeline Entries found in Trash'), 
+			'not_found_in_trash' => __('No Timeline Entries found in Trash'),
 			'parent_item_colon' => '',
 			'menu_name' => __('Timeline')
 		);
@@ -247,24 +246,24 @@
 			'labels' => $labels,
 			'public' => true,
 			'publicly_queryable' => true,
-			'show_ui' => true, 
-			'show_in_menu' => true, 
+			'show_ui' => true,
+			'show_in_menu' => true,
 			'query_var' => true,
 			'rewrite' => true,
 			'capability_type' => 'post',
-			'has_archive' => true, 
+			'has_archive' => true,
 			'hierarchical' => false,
 			'menu_position' => null,
 			'supports' => array( 'title', 'editor', 'thumbnail' ),
 			'register_meta_box_cb' => 'wpvt_meta_boxes'
-		); 
+		);
 		register_post_type( 'timeline' , $args );
-		
+
 		wp_register_style( 'veriteco_css', plugins_url('css/timeline.css', __FILE__) );
 		wp_enqueue_style('veriteco_css');
 	}
 	add_action( 'init', 'wpvt_post_type_init' );
-	
+
 	/* Metaboxes for Timeline Post Type */
 	function wpvt_meta_boxes() {
 		add_meta_box( 'timeline-meta', 'Timeline Meta Data', 'wpvt_meta_boxes_inner', 'timeline' );
@@ -275,7 +274,7 @@
 	function wpvt_meta_boxes_inner() {
 		global $post;
 		wp_nonce_field( plugin_basename( __FILE__ ), 'wpvt_noncename' ); // Use nonce for verification
-		
+
 		$meta = get_post_meta($post->ID);
 		?>
 		<div class="wpvt-metabox">
@@ -295,13 +294,13 @@
 				<label for="wpvt_video_caption">Video Caption:</label>
 				<input type="text" id="wpvt_video_caption" class="longinput" name="wpvtmeta[wpvt_video_caption]" value="<?php echo $meta['wpvt_video_caption'][0]; ?>" />
 			</div>
-			
+
 			<input type="submit" class="button" name="wpvt_meta_submit" value="Save Timeline Data" />
 		</div>
 		<?php
 	}
-	
-	
+
+
 	/* Save Meta Data */
 	function wpvt_save_wpvt_meta($post_id, $post) {
 		// verify this came from the our screen and with proper authorization,
@@ -316,7 +315,7 @@
 		// We'll put it into an array to make it easier to loop though.
 		// Serialize and save.
 		$wpvt_meta = $_POST['wpvtmeta'];
-		
+
 		// Add values of $events_meta as custom fields
 		foreach ($wpvt_meta as $key => $value) { // Cycle through the $events_meta array!
 			if( $post->post_type == 'revision' ) return; // Don't store custom data twice
@@ -328,16 +327,16 @@
 			if(!$value) delete_post_meta($post->ID, $key); // Delete if blank
 		}
 	}
-	add_action('save_post', 'wpvt_save_wpvt_meta', 1, 2); // save the custom fields	
-	
-	
+	add_action('save_post', 'wpvt_save_wpvt_meta', 1, 2); // save the custom fields
+
+
 	/* Save JSON file */
 	function wpvt_update_json( $post_id ) {
 		global $post;
 		$post = get_post( $post_id );
 		if($post->post_type == 'timeline') {
 			$options = get_option('wpvt_options');
-			
+
 			$string = '
 				{
 					"timeline":
@@ -347,25 +346,25 @@
 						"text":"' . $options['text'] . '",
 						"date": [
 			';
-			
+
 			// TODO: APPEND DATE ENTRIES
 			$args = array( 'post_type' => 'timeline' );
 			$loop = new WP_Query( $args );
 			$last = ($loop->post_count <= get_option('posts_per_page')) ? $loop->post_count : get_option('posts_per_page');
-			
+
 			while ( $loop->have_posts() ) :
 				$loop->the_post();
 				$entry = new wpvtEntry( $post );
-				
+
 				$string .= $entry->toJSON();
-				
+
 				if($loop->current_post < $loop->post_count - 1) {
 					$string .= ',';
 				}
-				
-				wp_reset_postdata();				
+
+				wp_reset_postdata();
 			endwhile;
-			
+
 			$string .= '
 					]
 					}
@@ -377,18 +376,18 @@
 		}
 	}
 	add_action('save_post', 'wpvt_update_json');
-	
-	
+
+
 	/* Shortcodes */
 	function wpvt_sc_func($atts) {
 		global $post;
 		$options = get_option('wpvt_options');
 		$start_at_end = ($options['start_at_end'] == 1) ? 'true' : 'false';
 		$hash_bookmark = ($options['hash_bookmark'] == 1) ? 'true' : 'false';
-		
+
 		// NOW I JUST NEED TO FETCH ALL THE POSTS, ARRANGE THE INFO INTO JSON THEN PRINT THE JAVASCRIPT CALL.
 		// MAYBE GO WITH THE OPTION OF WRITING INTO A SEPARATE JSON FILE SO WE DON'T QUERY EVERY TIME.
-		
+
 		echo '
 			<div id="timeline-embed"></div>
 			<script type="text/javascript">
@@ -403,9 +402,9 @@
 			</script>
 			<script type="text/javascript" src="' . plugins_url( 'js/timeline-embed.js', __FILE__ ).'"></script>
 		';
-		
+
 	}
 	add_shortcode('WPVT', 'wpvt_sc_func');
-	
-	
+
+
 ?>
