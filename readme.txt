@@ -3,7 +3,7 @@ Contributors: jjeaton, youngbhs
 Tags: VeriteCo, timeline, custom post types
 Requires at least: 3.4
 Tested up to: 3.8.1
-Stable tag: 1.1
+Stable tag: 1.1.1
 
 WP VeriteCo Timeline integrates VeriteCo's Timeline JS into the WordPress back-end.
 
@@ -26,7 +26,12 @@ Now creating a timeline is easier than ever with the WPVT shortcode.
 
 == Changelog ==
 
-= 1.1 =
+= 1.1.1 (2014-03-14) =
+
+* Show all timeline posts by default (UI to come)
+* Add GPL License
+
+= 1.1 (2014-03-14) =
 
 * Fix: Allow arbitrary HTML content within posts (don't strip slashes from JSON) (props titaniumbones)
 * Enhancement: Updated timeline.js to v2.29.1 (props titaniumbones)

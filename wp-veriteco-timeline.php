@@ -1,12 +1,29 @@
 <?php
-	/*
-	Plugin Name: WP VeriteCo Timeline
-	Plugin URI: http://www.josheaton.org/wordpress-plugins/wp-veriteco-timeline
-	Description: Internalizes VeriteCo Timeline Management into WordPress
-	Author: Josh Eaton, Young J. Yoon
-	Version: 1.1
-	Author URI: http://www.josheaton.org/
-	*/
+/*
+Plugin Name: WP VeriteCo Timeline
+Plugin URI: http://www.josheaton.org/wordpress-plugins/wp-veriteco-timeline
+Description: Internalizes VeriteCo Timeline Management into WordPress
+Author: Josh Eaton, Young J. Yoon
+Version: 1.1.1
+Author URI: http://www.josheaton.org/
+*/
+/*  Copyright 2014  Josh Eaton  (email : josh@josheaton.org)
+
+	Original code by Young J. Yoon.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 
 	/* TIMELINE ENTRY CLASS */
 	class wpvtEntry
@@ -348,9 +365,12 @@
 			';
 
 			// TODO: APPEND DATE ENTRIES
-			$args = array( 'post_type' => 'timeline' );
+			$args = array(
+				'post_type' => 'timeline',
+				'nopaging'  => true,
+			);
+
 			$loop = new WP_Query( $args );
-			$last = ($loop->post_count <= get_option('posts_per_page')) ? $loop->post_count : get_option('posts_per_page');
 
 			while ( $loop->have_posts() ) :
 				$loop->the_post();
