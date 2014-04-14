@@ -3,7 +3,7 @@ Contributors: jjeaton, youngbhs
 Tags: VeriteCo, timeline, custom post types
 Requires at least: 3.4
 Tested up to: 3.8.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 
 WP VeriteCo Timeline integrates VeriteCo's Timeline JS into the WordPress back-end.
 

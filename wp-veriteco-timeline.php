@@ -4,7 +4,7 @@ Plugin Name: WP VeriteCo Timeline
 Plugin URI: http://www.josheaton.org/wordpress-plugins/wp-veriteco-timeline
 Description: Internalizes VeriteCo Timeline Management into WordPress
 Author: Josh Eaton, Young J. Yoon
-Version: 1.1.1
+Version: 1.1.2
 Author URI: http://www.josheaton.org/
 */
 /*  Copyright 2014  Josh Eaton  (email : josh@josheaton.org)
