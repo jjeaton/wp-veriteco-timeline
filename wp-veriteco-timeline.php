@@ -45,7 +45,7 @@ Author URI: http://www.josheaton.org/
 			$this->headline = get_the_title( $this->post_id );
 
 			$text = apply_filters('the_content', $post->post_content);
-			$text = preg_replace('/\v+|\\\[rn]/','',$text);
+			$text = str_replace( array( "\r", "\n" ), '', $text );
 			$text = $this->undoTexturize($text);
 
 			$this->text = $text;

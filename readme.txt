@@ -26,6 +26,10 @@ Now creating a timeline is easier than ever with the WPVT shortcode.
 
 == Changelog ==
 
+= 1.1.2 (2014-04-13) =
+
+* Fix incompatible regex that was replacing lowercase "v" characters on certain versions of PHP
+
 = 1.1.1 (2014-03-14) =
 
 * Show all timeline posts by default (UI to come)
