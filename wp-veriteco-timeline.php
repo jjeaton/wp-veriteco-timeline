@@ -55,9 +55,11 @@ Author URI: http://www.josheaton.org/
 			if( $thumbnail_id ) {
 				// if there is featured image
 				$img = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+				$thumb = wp_get_attachment_image_src( $thumbnail_id, 'thumbnail' );
 				$thumbnail_image = get_post( $thumbnail_id, 'OBJECT' );
 				if ($thumbnail_image && isset($thumbnail_image)) {
 					$this->asset->media = $img[0];
+               		$this->asset->thumbnail = $thumb[0];
 					$this->asset->caption = $thumbnail_image->post_excerpt;
 				}
 			} else if( $meta['wpvt_video'][0] ) {
@@ -65,10 +67,6 @@ Author URI: http://www.josheaton.org/
 				$this->asset->media = $meta['wpvt_video'][0];
 				$this->asset->caption = $meta['wpvt_video_caption'][0];
 			}
-		}
-
-		public function toJSON() {
-			return json_encode($this);
 		}
 
 		public function undoTexturize($content, $deprecated = '') {
@@ -353,16 +351,12 @@ Author URI: http://www.josheaton.org/
 		$post = get_post( $post_id );
 		if($post->post_type == 'timeline') {
 			$options = get_option('wpvt_options');
-
-			$string = '
-				{
-					"timeline":
-					{
-						"headline":"' . $options['headline'] . '",
-						"type":"' . $options['type'] . '",
-						"text":"' . $options['text'] . '",
-						"date": [
-			';
+			$timeline_json = new stdClass();
+         	$timeline_json->timeline = new stdClass();
+         	$timeline_json->timeline->headline = $options['headline'];
+         	$timeline_json->timeline->type = $options['type'];
+         	$timeline_json->timeline->text = $options['text'];
+         	$timeline_json->timeline->date = array();
 
 			// TODO: APPEND DATE ENTRIES
 			$args = array(
@@ -375,13 +369,7 @@ Author URI: http://www.josheaton.org/
 			while ( $loop->have_posts() ) :
 				$loop->the_post();
 				$entry = new wpvtEntry( $post );
-
-				$string .= $entry->toJSON();
-
-				if($loop->current_post < $loop->post_count - 1) {
-					$string .= ',';
-				}
-
+				$timeline_json->timeline->date[] = $entry;
 				wp_reset_postdata();
 			endwhile;
 
@@ -392,7 +380,7 @@ Author URI: http://www.josheaton.org/
 			';
 
 			$jsonFile = plugin_dir_path( __FILE__ ) . "/timeline.json";
-			file_put_contents($jsonFile, $string);
+			file_put_contents( $jsonFile, json_encode( $timeline_json ) );
 		}
 	}
 	add_action('save_post', 'wpvt_update_json');
@@ -425,6 +413,3 @@ Author URI: http://www.josheaton.org/
 
 	}
 	add_shortcode('WPVT', 'wpvt_sc_func');
-
-
-?>
