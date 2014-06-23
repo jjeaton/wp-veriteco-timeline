@@ -1,5 +1,5 @@
 #WP VeriteCo Timeline
-Contributors: @jjeaton, @youngbhs  
+Contributors: [@jjeaton](https://github.com/jjeaton/ "jjeaton"), @youngbhs  
 Tags: VeriteCo, timeline, custom post types  
 Requires at least: 3.4  
 Tested up to: 3.8.1  
