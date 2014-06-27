@@ -101,8 +101,6 @@ Author URI: http://www.josheaton.org/
 		$capability = "publish_posts";
 		$menu_slug = "wpvt_config";
 		$function = "wpvt_config_page";
-		$icon_url = "";
-		$position = "";
 
 		add_options_page( $page_title, $menu_title, $capability, $menu_slug, $function );
 
@@ -269,6 +267,7 @@ Author URI: http://www.josheaton.org/
 			'has_archive' => true,
 			'hierarchical' => false,
 			'menu_position' => null,
+			'menu_icon' => 'dashicons-backup',
 			'supports' => array( 'title', 'editor', 'thumbnail' ),
 			'register_meta_box_cb' => 'wpvt_meta_boxes'
 		);
