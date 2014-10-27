@@ -76,7 +76,7 @@ Author URI: http://www.josheaton.org/
 			// Translation of invalid Unicode references range to valid range
 			$wp_htmltranswinuni = array(
 				'&#8211;' => '-',
-				'&#8212;' => '�',
+				'&#8212;' => '�',
 				'&#8217;' => '\'',
 				'&#8218;' => ',',
 				'&#8220;' => '\"',
@@ -85,7 +85,7 @@ Author URI: http://www.josheaton.org/
 			// Fix Word pasting
 			$content = strtr($content, $wp_htmltranswinuni);
 			return $content;
-		}
+		} 
 	}
 
 
@@ -293,6 +293,20 @@ Author URI: http://www.josheaton.org/
 		?>
 		<div class="wpvt-metabox">
 			<div class="wpvt-metabox-item">
+				<label for="wpvt_timeline_name">Timeline Name</label>
+				<select id="wpvt_timeline_name" name="wpvtmeta[wpvt_timeline_name]">
+				<?php
+					$owners = get_option('wpvt_timeline_names');
+					foreach ($owners as $key => $owner) :
+				?>
+					<option id="<?php echo $key; ?>" value="<?php echo $owner; ?>"<?php if($meta['wpvt_timeline_name'][0] == $owner) {echo "selected=selected";} ?>><?php echo $owner; ?></option>
+				<?php endforeach; ?>
+				</select>
+				<label for="wpvt_new_timeline_name">Add Timeline Name:</label>
+				<input type="text" id="wpvt_new_timeline_name" name="wpvt_new_timeline_name"/>
+				<button name="add_timeline_name" type="submit">Add</button>
+			</div>
+			<div class="wpvt-metabox-item">
 				<label for="wpvt_start_date">Start Date:</label>
 				<input type="text" id="wpvt_start_date" name="wpvtmeta[wpvt_start_date]" class="datepicker" value="<?php echo $meta['wpvt_start_date'][0]; ?>" />
 			</div>
@@ -313,7 +327,82 @@ Author URI: http://www.josheaton.org/
 		</div>
 		<?php
 	}
+	
+	/**
+	 * Function to add a timeline name, and save in one serialize option
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.1.0 [23/10/2014 09:58:30]
+	 * @copyright Desenvolvimento Canção Nova
+	 */
+	function add_new_timeline_name() {
+		if (!empty($_POST['wpvt_new_timeline_name'])) :
+			$owners = get_option('wpvt_timeline_names');
+			$owners[] = $_POST['wpvt_new_timeline_name'];
+			update_option('wpvt_timeline_names', $owners);
+			exit();
+		endif; 
+	}
+	add_action('wp_ajax_add_new_timeline_name', 'add_new_timeline_name', 10, 0);
 
+	/**
+	 * Function to add a button, and show a pop-up with the option to select the timeline
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.1.1 [23/10/2014 09:28:00]
+	 * @copyright Desenvolvimento Canção Nova
+	 * @param string $context html to create the button
+	 * @return string $context html to create the button
+	 */
+	function wpvt_insert_timeline_shortcode_button($context) {
+		//Loading add Timeline button for post and pages
+		if (get_post_type() == 'post' || get_post_type() == 'page') :
+	?>
+			<div id="wpvt_timeline_thickbox_container" style="display:none">
+				<form id="wpvt_form_timeline" action="" method="post">
+					<label for="wpvt_select_timeline">Select Timeline</label>
+					<select id="wpvt_select_timeline" name="wpvt_select_timeline">
+					<?php
+						$owners = get_option('wpvt_timeline_names');
+						foreach ($owners as $key => $owner) :
+					?>
+						<option id="<?php echo $key; ?>" value="<?php echo $owner; ?>"><?php echo $owner; ?></option>
+					<?php endforeach; ?>
+					</select>
+					<p><button name="wpvt_insert_timeline" type="submit">Insert Timeline</button></p>
+				</form>
+			</div>
+	<?php
+			//Patch to icon.
+			$img = plugins_url( '/images/bhs-plugins.png' , __FILE__ );
+
+			//id of the content you want to display inside the pop-up.
+			$container_id = 'wpvt_timeline_thickbox_container';
+
+			//Pop-up title.
+			$title = 'Select Timeline';
+
+			//Creating the button.
+			$context .= "<a class='button add_media thickbox' title='{$title}' href='#TB_inline?width=400&inlineId={$container_id}'>
+			<img width='18' height='18' style='vertical-align: middle; margin-left: -8px; margin-top: -2px;' src='{$img}' />Add Timeline</a>";
+
+			return $context;
+		endif;
+	}
+	add_action('media_buttons_context', 'wpvt_insert_timeline_shortcode_button', 10, 1);
+	
+	/**
+	 * Function to send the id of timeline by ajax, and generate a shortcode that is inserted into the post content
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.0.0 [23/10/2014 09:46:30]
+	 * @copyright Desenvolvimento Canção Nova
+	 */
+	function wpvt_insert_timeline_shortcode_ajax() {
+		//Calling the function to create the button.
+		wpvt_insert_timeline_shortcode_button($context);
+
+		//Used to not return 0 in ajax response.
+		exit();
+	}
+	add_action('wp_ajax_wpvt_insert_timeline_shortcode_ajax', 'wpvt_insert_timeline_shortcode_ajax', 10, 0);
 
 	/* Save Meta Data */
 	function wpvt_save_wpvt_meta($post_id, $post) {
