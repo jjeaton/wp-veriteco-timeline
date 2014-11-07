@@ -92,6 +92,11 @@
 
 	/* Initailaize Back-end */
 	function wpvt_admin_init() {
+		
+		//Create timeline jsons folder in upload blog dir.
+		$upload_dir = wp_upload_dir();
+		wp_mkdir_p( $upload_dir['basedir'].'/wpvt_jsons');
+		
 		wp_register_script( 'veriteco', plugins_url('js/timeline-min.js', __FILE__) );
 
 		wp_register_script( 'wpvt_custom', plugins_url('js/wpvt_custom.js', __FILE__) );
@@ -395,7 +400,7 @@
 
 			$file = !empty($wpvt_timeline_name)? "-".$wpvt_timeline_name : "";
 			$upload_dir = wp_upload_dir();
-			$jsonFile = $upload_dir['basedir']."/jsons/timeline".$file.".json";
+			$jsonFile = $upload_dir['basedir']."/wpvt_jsons/timeline".$file.".json";
 			file_put_contents( $jsonFile, json_encode( $timeline_json ) );
 		}
 	}
@@ -414,9 +419,9 @@
 		$upload_dir = wp_upload_dir();
 
 		if(array_key_exists("id",$atts)) {
-			$jsonfile = "/jsons/timeline-".$atts["id"].".json";
+			$jsonfile = "/wpvt_jsons/timeline-".$atts["id"].".json";
 		} else {
-			$jsonfile = "/jsons/timeline.json";
+			$jsonfile = "/wpvt_jsons/timeline.json";
 		}
 
 		echo '
