@@ -6,10 +6,10 @@ jQuery(document).ready(function($){
 	/**
 	 * Add a new timeline name, without refresh page.
 	 * @author Ewerton Luiz <ewerton@cancaonova.com>
-	 * @version 1.1.1 [23/10/2014 10:04:00]
+	 * @version 1.2.1 [23/10/2014 10:46:00]
 	 * @copyright 2014 Desenvolvimento Canção Nova
 	 * @param event event prevent refresh page
-	 * @var array data pass the values to jquery post 
+	 * @var object data pass the values to jquery post
 	 */
 	jQuery("button[name=add_timeline_name]").click(function (event) {
 		//prevent refresh page after submit form.
@@ -17,15 +17,14 @@ jQuery(document).ready(function($){
 
 		var data = {
 			action: 'add_new_timeline_name',
-			wpvt_new_timeline_name: jQuery('#wpvt_new_timeline_name').val(),
+			wpvt_new_timeline_name: jQuery('#wpvt_new_timeline_name').val()
 		};
 
-		jQuery.post(ajaxurl, data, function($) {
+		jQuery.post(ajaxurl, data, function(response) {
 			if(jQuery('#wpvt_new_timeline_name').val() != "") {
 				jQuery('#wpvt_timeline_name').append(jQuery('<option>', {
-					'value': jQuery('#wpvt_new_timeline_name').val(),
+					'value': (parseInt(jQuery('#wpvt_timeline_name option').length)),
 					'text': jQuery('#wpvt_new_timeline_name').val(),
-					'id': (parseInt(jQuery('#wpvt_timeline_name').children().length)+1),
 					'selected': 'selected'
 				}));
 			} else {
@@ -37,11 +36,11 @@ jQuery(document).ready(function($){
 	/**
 	 * Adds "id" attribute to the default plugin shortcode with the selected option "value" from the stored timelines
 	 * @author Ewerton Luiz <ewerton@cancaonova.com>
-	 * @version 1.2.1 [23/10/2014 11:12:30]
+	 * @version 1.4.1 [29/10/2014 08:57:30]
 	 * @copyright 2014 Desenvolvimento Canção Nova
 	 * @param event event prevent refresh page
 	 * @var string option get the id attribute of the this selected element
-	 * @var array data pass the values to jquery post
+	 * @var object data pass the values to jquery post
 	 * @var string shortcode create the shortcode to insert into post content
 	 */
 	jQuery("button[name=wpvt_insert_timeline]").click(function (event) {
@@ -51,9 +50,13 @@ jQuery(document).ready(function($){
 		//Close the thickbox after submit form.
 		window.parent.tb_remove();
 
-		var option = "";
-		$( "#wpvt_select_timeline option:selected" ).each(function() {
-			option = $( this ).attr('id');
+		//Defined variables.
+		var option = '';
+		var shortcode = '';
+
+		//Loop options to retrieve value the attribute 'id' of selected element.
+		jQuery( "#wpvt_select_timeline option:selected" ).each(function() {
+			option = $(this).val();
 		});
 
 		var data = {
@@ -61,11 +64,16 @@ jQuery(document).ready(function($){
 			select_owner: option
 		};
 
-		jQuery.post(ajaxurl, data, function($) {
-			if (jQuery("#content").length) {
-				var shortcode = '[WPVT id='+ data.select_owner +']';
+		//Check if the selected option is first, case true not add the attribute id in shortcode.
+		if (option === '0') {
+			shortcode = '[WPVT]';
+		} else {
+			shortcode = '[WPVT id='+ data.select_owner +']';
+		}
 
-				//Add the shortcode into the post content for Text and Visual modes
+		jQuery.post(ajaxurl, data, function(response) {
+			if (jQuery("#content").length) {
+				//Add the shortcode into the post content for Text and Visual modes.
 				jQuery('#content').val(jQuery('#content').val() + shortcode);
 				tinymce.activeEditor.execCommand('mceInsertContent', false, shortcode);
 			}

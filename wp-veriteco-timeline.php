@@ -1,33 +1,34 @@
 <?php
 /*
-Plugin Name: WP VeriteCo Timeline
-Plugin URI: http://www.josheaton.org/wordpress-plugins/wp-veriteco-timeline
-Description: Internalizes VeriteCo Timeline Management into WordPress
-Author: Josh Eaton, Young J. Yoon
-Version: 1.1.2
-Author URI: http://www.josheaton.org/
+ Plugin Name: WP VeriteCo Timeline
+ Plugin URI: http://www.josheaton.org/wordpress-plugins/wp-veriteco-timeline
+ Description: Internalizes VeriteCo Timeline Management into WordPress
+ Author: Josh Eaton, Young J. Yoon
+ Version: 1.1.2
+ Author URI: http://www.josheaton.org/
 */
-/*  Copyright 2014  Josh Eaton  (email : josh@josheaton.org)
 
-	Original code by Young J. Yoon.
+/*
+ Copyright 2014  Josh Eaton  (email : josh@josheaton.org)
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as
-    published by the Free Software Foundation.
+ Original code by Young J. Yoon.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License, version 2, as
+ published by the Free Software Foundation.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 	/* TIMELINE ENTRY CLASS */
-	class wpvtEntry
-	{
+	class wpvtEntry	{
 		private $post_id;
 
 		public $startDate;
@@ -59,7 +60,7 @@ Author URI: http://www.josheaton.org/
 				$thumbnail_image = get_post( $thumbnail_id, 'OBJECT' );
 				if ($thumbnail_image && isset($thumbnail_image)) {
 					$this->asset->media = $img[0];
-               		$this->asset->thumbnail = $thumb[0];
+					$this->asset->thumbnail = $thumb[0];
 					$this->asset->caption = $thumbnail_image->post_excerpt;
 				}
 			} else if( $meta['wpvt_video'][0] ) {
@@ -113,7 +114,6 @@ Author URI: http://www.josheaton.org/
 	}
 	add_action('admin_menu', 'wpvt_admin_init');
 
-
 	/* Load Default Settings */
 	function wpvt_default_settings() {
 		$tmp = get_option('wpvt_options');
@@ -128,7 +128,6 @@ Author URI: http://www.josheaton.org/
 		}
 	}
 	register_activation_hook(__FILE__, 'wpvt_default_settings');
-
 
 	/* Settings */
 	function wpvt_settings_init() {
@@ -185,35 +184,35 @@ Author URI: http://www.josheaton.org/
 	}
 	add_action('admin_init', 'wpvt_settings_init');
 
-		function wpvt_callback() { echo '<p>Adjust settings for the Timeline here.</p>'; }
+	function wpvt_callback() { echo '<p>Adjust settings for the Timeline here.</p>'; }
 
-		function wpvt_setting_string( $args ) {
-			$options = get_option('wpvt_options');
-			$id = $args['id'];
-			$type = $args['type'];
+	function wpvt_setting_string( $args ) {
+		$options = get_option('wpvt_options');
+		$id = $args['id'];
+		$type = $args['type'];
 
-			switch($type) {
-				case 'text':
-					$class = ($args['class']) ? ' class="'.$args['class'].'"' : '';
-					echo "<input id='wpvt_".$id."' name='wpvt_options[".$id."]' type='text'". $class ." value='".$options[$id]."' />";
-					break;
-				case 'select':
-					$choices = $args['options'];
-					echo '<select id="wpvt_'.$id.'" name="wpvt_options['.$id.']">';
-					foreach($choices as $value => $label) {
-						$selected = ($options[$id] == $value) ? ' selected' : '';
-						echo '<option value="' . $value . '" ' . $selected . '>' . $label . '</option>';
-					}
-					echo '</select>';
-					break;
-				case 'checkbox':
-					$checked = ($options[$id] == '1') ? ' checked' : '';
-					echo '<input id="wpvt_'.$id.'" name="wpvt_options['.$id.']" type="checkbox" value="1" class="code" ' . $checked . ' /> '.$args['label'];
-					break;
-				default:
-					break;
-			}
+		switch($type) {
+			case 'text':
+				$class = ($args['class']) ? ' class="'.$args['class'].'"' : '';
+				echo "<input id='wpvt_".$id."' name='wpvt_options[".$id."]' type='text'". $class ." value='".$options[$id]."' />";
+				break;
+			case 'select':
+				$choices = $args['options'];
+				echo '<select id="wpvt_'.$id.'" name="wpvt_options['.$id.']">';
+				foreach($choices as $value => $label) {
+					$selected = ($options[$id] == $value) ? ' selected' : '';
+					echo '<option value="' . $value . '" ' . $selected . '>' . $label . '</option>';
+				}
+				echo '</select>';
+				break;
+			case 'checkbox':
+				$checked = ($options[$id] == '1') ? ' checked' : '';
+				echo '<input id="wpvt_'.$id.'" name="wpvt_options['.$id.']" type="checkbox" value="1" class="code" ' . $checked . ' /> '.$args['label'];
+				break;
+			default:
+				break;
 		}
+	}
 
 	/* Back-end Interface */
 	function wpvt_config_page() { ?>
@@ -222,10 +221,8 @@ Author URI: http://www.josheaton.org/
 				<div id="wpvt-icon"><br /></div>
 				<?php echo '<h1 class="wpvt-title">' . __( 'WP Veriteco Timeline Configuration', 'wpvt-config' ) . '</h1>'; ?>
 				<div class="clear"></div>
-
 				<div class="postbox timeline-postbox">
 					<h3>Timeline Settings</h3>
-
 					<div class="inside">
 						<form method="post" action="options.php">
 							<?php settings_fields( 'wpvt_optiongroup' ); ?>
@@ -236,7 +233,7 @@ Author URI: http://www.josheaton.org/
 				</div><!-- #postbox -->
 			</div><!-- #poststuff -->
 		</div>
-	<?php }
+<?php }
 
 	/* Register custom post type */
 	function wpvt_post_type_init() {
@@ -288,18 +285,20 @@ Author URI: http://www.josheaton.org/
 	function wpvt_meta_boxes_inner() {
 		global $post;
 		wp_nonce_field( plugin_basename( __FILE__ ), 'wpvt_noncename' ); // Use nonce for verification
-
 		$meta = get_post_meta($post->ID);
-		?>
+?>
 		<div class="wpvt-metabox">
 			<div class="wpvt-metabox-item">
 				<label for="wpvt_timeline_name">Timeline Name</label>
 				<select id="wpvt_timeline_name" name="wpvtmeta[wpvt_timeline_name]">
 				<?php
-					$owners = get_option('wpvt_timeline_names');
-					foreach ($owners as $key => $owner) :
+					$wpvt_timeline_names = get_option('wpvt_timeline_names');
+					if(empty($wpvt_timeline_names)) { ?>
+						<option value="0">Select Timeline</option>
+				<?	}
+					foreach ($wpvt_timeline_names as $key => $wpvt_timeline_name) :
 				?>
-					<option id="<?php echo $key; ?>" value="<?php echo $owner; ?>"<?php if($meta['wpvt_timeline_name'][0] == $owner) {echo "selected=selected";} ?>><?php echo $owner; ?></option>
+					<option value="<?php echo $key; ?>"<?php if($meta['wpvt_timeline_name'][0] == $key) {echo "selected=selected";} ?>><?php echo $wpvt_timeline_name; ?></option>
 				<?php endforeach; ?>
 				</select>
 				<label for="wpvt_new_timeline_name">Add Timeline Name:</label>
@@ -322,87 +321,9 @@ Author URI: http://www.josheaton.org/
 				<label for="wpvt_video_caption">Video Caption:</label>
 				<input type="text" id="wpvt_video_caption" class="longinput" name="wpvtmeta[wpvt_video_caption]" value="<?php echo $meta['wpvt_video_caption'][0]; ?>" />
 			</div>
-
 			<input type="submit" class="button" name="wpvt_meta_submit" value="Save Timeline Data" />
 		</div>
-		<?php
-	}
-	
-	/**
-	 * Function to add a timeline name, and save in one serialize option
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
-	 * @version 1.1.0 [23/10/2014 09:58:30]
-	 * @copyright Desenvolvimento Canção Nova
-	 */
-	function add_new_timeline_name() {
-		if (!empty($_POST['wpvt_new_timeline_name'])) :
-			$owners = get_option('wpvt_timeline_names');
-			$owners[] = $_POST['wpvt_new_timeline_name'];
-			update_option('wpvt_timeline_names', $owners);
-			exit();
-		endif; 
-	}
-	add_action('wp_ajax_add_new_timeline_name', 'add_new_timeline_name', 10, 0);
-
-	/**
-	 * Function to add a button, and show a pop-up with the option to select the timeline
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
-	 * @version 1.1.1 [23/10/2014 09:28:00]
-	 * @copyright Desenvolvimento Canção Nova
-	 * @param string $context html to create the button
-	 * @return string $context html to create the button
-	 */
-	function wpvt_insert_timeline_shortcode_button($context) {
-		//Loading add Timeline button for post and pages
-		if (get_post_type() == 'post' || get_post_type() == 'page') :
-	?>
-			<div id="wpvt_timeline_thickbox_container" style="display:none">
-				<form id="wpvt_form_timeline" action="" method="post">
-					<label for="wpvt_select_timeline">Select Timeline</label>
-					<select id="wpvt_select_timeline" name="wpvt_select_timeline">
-					<?php
-						$owners = get_option('wpvt_timeline_names');
-						foreach ($owners as $key => $owner) :
-					?>
-						<option id="<?php echo $key; ?>" value="<?php echo $owner; ?>"><?php echo $owner; ?></option>
-					<?php endforeach; ?>
-					</select>
-					<p><button name="wpvt_insert_timeline" type="submit">Insert Timeline</button></p>
-				</form>
-			</div>
-	<?php
-			//Patch to icon.
-			$img = plugins_url( '/images/bhs-plugins.png' , __FILE__ );
-
-			//id of the content you want to display inside the pop-up.
-			$container_id = 'wpvt_timeline_thickbox_container';
-
-			//Pop-up title.
-			$title = 'Select Timeline';
-
-			//Creating the button.
-			$context .= "<a class='button add_media thickbox' title='{$title}' href='#TB_inline?width=400&inlineId={$container_id}'>
-			<img width='18' height='18' style='vertical-align: middle; margin-left: -8px; margin-top: -2px;' src='{$img}' />Add Timeline</a>";
-
-			return $context;
-		endif;
-	}
-	add_action('media_buttons_context', 'wpvt_insert_timeline_shortcode_button', 10, 1);
-	
-	/**
-	 * Function to send the id of timeline by ajax, and generate a shortcode that is inserted into the post content
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
-	 * @version 1.0.0 [23/10/2014 09:46:30]
-	 * @copyright Desenvolvimento Canção Nova
-	 */
-	function wpvt_insert_timeline_shortcode_ajax() {
-		//Calling the function to create the button.
-		wpvt_insert_timeline_shortcode_button($context);
-
-		//Used to not return 0 in ajax response.
-		exit();
-	}
-	add_action('wp_ajax_wpvt_insert_timeline_shortcode_ajax', 'wpvt_insert_timeline_shortcode_ajax', 10, 0);
+<?php }
 
 	/* Save Meta Data */
 	function wpvt_save_wpvt_meta($post_id, $post) {
@@ -432,7 +353,6 @@ Author URI: http://www.josheaton.org/
 	}
 	add_action('save_post', 'wpvt_save_wpvt_meta', 1, 2); // save the custom fields
 
-
 	/* Save JSON file */
 	function wpvt_update_json( $post_id ) {
 		global $post;
@@ -440,17 +360,23 @@ Author URI: http://www.josheaton.org/
 		if($post->post_type == 'timeline') {
 			$options = get_option('wpvt_options');
 			$timeline_json = new stdClass();
-         	$timeline_json->timeline = new stdClass();
-         	$timeline_json->timeline->headline = $options['headline'];
-         	$timeline_json->timeline->type = $options['type'];
-         	$timeline_json->timeline->text = $options['text'];
-         	$timeline_json->timeline->date = array();
+			$timeline_json->timeline = new stdClass();
+			$timeline_json->timeline->headline = $options['headline'];
+			$timeline_json->timeline->type = $options['type'];
+			$timeline_json->timeline->text = $options['text'];
+			$timeline_json->timeline->date = array();
 
-			// TODO: APPEND DATE ENTRIES
+			//TODO:APPEND DATE ENTRIES
 			$args = array(
 				'post_type' => 'timeline',
 				'nopaging'  => true,
 			);
+
+			$wpvt_timeline_name = get_post_meta( $post_id, 'wpvt_timeline_name', true );
+
+			if(!empty($wpvt_timeline_name)) {
+				$args = array_merge($args, array('meta_key' => 'wpvt_timeline_name', 'meta_value' => $wpvt_timeline_name));
+			}
 
 			$loop = new WP_Query( $args );
 
@@ -467,37 +393,263 @@ Author URI: http://www.josheaton.org/
 				}
 			';
 
-			$jsonFile = plugin_dir_path( __FILE__ ) . "/timeline.json";
+			$file = !empty($wpvt_timeline_name)? "-".$wpvt_timeline_name : "";
+			$upload_dir = wp_upload_dir();
+			$jsonFile = $upload_dir['basedir']."/jsons/timeline".$file.".json";
 			file_put_contents( $jsonFile, json_encode( $timeline_json ) );
 		}
 	}
 	add_action('save_post', 'wpvt_update_json');
 
-
 	/* Shortcodes */
 	function wpvt_sc_func($atts) {
+
 		global $post;
 		$options = get_option('wpvt_options');
 		$start_at_end = ($options['start_at_end'] == 1) ? 'true' : 'false';
 		$hash_bookmark = ($options['hash_bookmark'] == 1) ? 'true' : 'false';
 
-		// NOW I JUST NEED TO FETCH ALL THE POSTS, ARRANGE THE INFO INTO JSON THEN PRINT THE JAVASCRIPT CALL.
-		// MAYBE GO WITH THE OPTION OF WRITING INTO A SEPARATE JSON FILE SO WE DON'T QUERY EVERY TIME.
+		//NOW I JUST NEED TO FETCH ALL THE POSTS, ARRANGE THE INFO INTO JSON THEN PRINT THE JAVASCRIPT CALL.
+		//MAYBE GO WITH THE OPTION OF WRITING INTO A SEPARATE JSON FILE SO WE DON'T QUERY EVERY TIME.
+		$upload_dir = wp_upload_dir();
+
+		if(array_key_exists("id",$atts)) {
+			$jsonfile = "/jsons/timeline-".$atts["id"].".json";
+		} else {
+			$jsonfile = "/jsons/timeline.json";
+		}
 
 		echo '
 			<div id="timeline-embed"></div>
 			<script type="text/javascript">
-		    var timeline_config = {
-				width: "'.$options['width'].'",
-				height: "'.$options['height'].'",
-				source: "'.plugins_url( 'timeline.json', __FILE__ ).'",
-				start_at_end: '.$start_at_end.',
-				hash_bookmark: '.$hash_bookmark.',
-				css: "'.plugins_url( 'css/themes/font/'.$options['fonts'].'.css', __FILE__ ).'"	//OPTIONAL
-			}
+				var timeline_config = {
+					width: "'.$options['width'].'",
+					height: "'.$options['height'].'",
+					source: "'.$upload_dir['baseurl'].$jsonfile.'",
+					start_at_end: '.$start_at_end.',
+					hash_bookmark: '.$hash_bookmark.',
+					css: "'.plugins_url( 'css/themes/font/'.$options['fonts'].'.css', __FILE__ ).'"	//OPTIONAL
+				}
 			</script>
-			<script type="text/javascript" src="' . plugins_url( 'js/timeline-embed.js', __FILE__ ).'"></script>
+			<script type="text/javascript" src="'.plugins_url( 'js/timeline-embed.js', __FILE__ ).'"></script>
 		';
-
 	}
 	add_shortcode('WPVT', 'wpvt_sc_func');
+
+	/**
+	 * +---------------------------------------------------------------------------------------------+
+	 * | Copyright (c) 2014 Desenvolvimento Canção Nova                                              |
+	 * +---------------------------------------------------------------------------------------------+
+	*/
+
+	/**
+	 * Function to add a timeline name, and save in one serialize option
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.1.0 [23/10/2014 09:58:30]
+	 * @copyright Desenvolvimento Canção Nova
+	 */
+	function add_new_timeline_name() {
+		if (!empty($_POST['wpvt_new_timeline_name'])) :
+
+			$wpvt_timeline_names = get_option('wpvt_timeline_names');
+			if(empty($wpvt_timeline_names)) :
+				//first item index 0
+				$wpvt_timeline_names[] = "Select Timeline";
+			endif;
+
+			$wpvt_timeline_names[] = $_POST['wpvt_new_timeline_name'];
+			update_option('wpvt_timeline_names', $wpvt_timeline_names);
+
+			//Used to not return 0 in ajax response.
+			exit;
+		endif;
+	}
+	add_action('wp_ajax_add_new_timeline_name', 'add_new_timeline_name', 10, 0);
+
+	/**
+	 * Function to add a button, and show a pop-up with the option to select the timeline
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.1.1 [23/10/2014 09:28:00]
+	 * @copyright Desenvolvimento Canção Nova
+	 * @param string $context html to create the button
+	 * @return string $context html to create the button
+	*/
+	function wpvt_insert_timeline_shortcode_button($context) {
+		//Loading add Timeline button for post and pages
+		if (get_post_type() == 'post' || get_post_type() == 'page') :
+?>
+			<div id="wpvt_timeline_thickbox_container" style="display:none">
+				<form id="wpvt_form_timeline" action="" method="post">
+					<label for="wpvt_select_timeline">Select Timeline</label>
+					<select id="wpvt_select_timeline" name="wpvt_select_timeline">
+					<?php
+						$wpvt_timeline_names = get_option('wpvt_timeline_names');
+						foreach ($wpvt_timeline_names as $key => $wpvt_timeline_name) :
+					?>
+						<option value="<?php echo $key; ?>"><?php echo $wpvt_timeline_name; ?></option>
+					<?php endforeach; ?>
+					</select>
+					<p><button name="wpvt_insert_timeline" type="submit">Insert Timeline</button></p>
+				</form>
+			</div>
+<?php
+			//Patch to icon.
+			$img = plugins_url( '/images/bhs-plugins.png' , __FILE__ );
+
+			//id of the content you want to display inside the pop-up.
+			$container_id = 'wpvt_timeline_thickbox_container';
+
+			//Pop-up title.
+			$title = 'Select Timeline';
+
+			//Creating the button.
+			$context .= "<a class='button add_media thickbox' title='{$title}' href='#TB_inline?width=400&inlineId={$container_id}'>
+			<img width='18' height='18' style='vertical-align: middle; margin-left: -8px; margin-top: -2px;' src='{$img}' />Add Timeline</a>";
+
+			return $context;
+		endif;
+	}
+	add_action('media_buttons_context', 'wpvt_insert_timeline_shortcode_button', 10, 1);
+
+	/**
+	 * Function to send the id of timeline by ajax, and generate a shortcode that is inserted into the post content
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.0.0 [23/10/2014 09:46:30]
+	 * @copyright Desenvolvimento Canção Nova
+	 */
+	function wpvt_insert_timeline_shortcode_ajax() {
+		//Calling the function to create the button.
+		wpvt_insert_timeline_shortcode_button($context);
+
+		//Used to not return 0 in ajax response.
+		exit();
+	}
+	add_action('wp_ajax_wpvt_insert_timeline_shortcode_ajax', 'wpvt_insert_timeline_shortcode_ajax', 10, 0);
+
+	/**
+	 * Function to create the timeline column.
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.0.0 [23/10/2014 09:46:30]
+	 * @copyright Desenvolvimento Canção Nova 
+	 * @param object $columns
+	 * @return string
+	 */
+	function timeline_collumn_headers($columns) {
+		if (!isset($columns['timeline_name'])) {
+			$columns['timeline_name'] = 'Timeline Name';
+			$column_date = $columns['date'];
+			unset($columns['date']);
+			$columns['date'] = $column_date;
+		}
+		return $columns;
+	}
+	add_filter('manage_edit-timeline_columns', 'timeline_collumn_headers', 10, 1);
+
+	/**
+	 * Function to display the name of the timeline.
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.0.0 [23/10/2014 09:46:30]
+	 * @copyright Desenvolvimento Canção Nova 
+	 * @param object $column
+	 * @param int $post_id
+	 */	
+	function timeline_collumn_info($column, $post_id) {
+		$timeline_names = get_option('wpvt_timeline_names');
+		$timeline_id = get_post_meta($post_id , 'wpvt_timeline_name' , true);
+		$timeline_name = $timeline_names[$timeline_id];
+		switch ( $column ) {
+			case 'timeline_name':
+				echo $timeline_name;
+				break;
+		}
+	}
+	add_action('manage_timeline_posts_custom_column', 'timeline_collumn_info', 10, 2);
+
+	/**
+	 * Function to enable timeline sortable columns.
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.0.0 [23/10/2014 09:46:30]
+	 * @copyright Desenvolvimento Canção Nova 
+	 * @param unknown $columns
+	 * @return string
+	 */
+	function timeline_sortable_columns($columns) {
+		$columns['timeline_name'] = 'timeline_name';
+		return $columns;
+	}
+	add_filter('manage_edit-timeline_sortable_columns', 'timeline_sortable_columns', 10, 1);
+
+	/**
+	 * Function to enable timeline column order by.
+	 * @author Ewerton Luiz <ewerton@cancaonova.com>
+	 * @version 1.0.0 [23/10/2014 09:46:30]
+	 * @copyright Desenvolvimento Canção Nova 
+	 * @param unknown $query
+	 * @return unknown
+	 */
+	function timeline_column_orderby($query) {
+		if (!empty($_GET['orderby'])) {
+			if ('timeline_name' == $_GET['orderby']) {
+				$query->query_vars['orderby'] = 'meta_value';
+				$query->query_vars['meta_key'] = 'wpvt_timeline_name';
+			}
+		}
+		return $query;
+	}
+	add_filter('parse_query', 'timeline_column_orderby', 10, 1);
+
+	/**
+	 * First create the dropdown make sure to change POST_TYPE to the name of your custom post type
+	 * @author Ohad Raz
+	 * @return void
+	*/
+	function wpvt_timeline_name_select_filter() {
+		//only add filter to post type you want
+		$type = 'timeline';
+
+		if (isset($_GET['post_type'])) {
+			$type = $_GET['post_type'];
+		}
+
+		//change this to the list of values you want to show
+		//in 'label' => 'value' format
+		$timeline_names = get_option('wpvt_timeline_names'); 
+?>
+		<select name="wpvt_timeline_filter">
+			<option value=""><?php _e('Filter Timeline By', 'acs'); ?></option>
+<?php
+			$current_v = isset($_GET['wpvt_timeline_filter'])? $_GET['wpvt_timeline_filter']:'';
+			foreach ($timeline_names as $timeline_key => $timeline_value) {
+				if ($timeline_key > 0) {
+					printf(
+						'<option value="%s"%s>%s</option>', $timeline_key, 
+						$timeline_key == $current_v ? 'selected="selected"' : '', $timeline_value
+					);
+				}
+			}
+?>
+		</select>
+<?php
+	}
+	add_action( 'restrict_manage_posts', 'wpvt_timeline_name_select_filter' );
+
+	/**
+	* if submitted filter by post meta make sure to change META_KEY to the actual meta key and POST_TYPE to the name of your custom post type
+	 * @author Ohad Raz
+	 * @param (wp_query object) $query
+	 * @return Void
+	 */
+	function wpvt_timeline_name_posts_filter( $query ){
+		global $pagenow;
+		$type = 'timeline';
+
+		if (isset($_GET['post_type'])) {
+			$type = $_GET['post_type'];
+		}
+
+		if ('timeline' == $type && is_admin() && $pagenow=='edit.php' && isset($_GET['wpvt_timeline_filter']) && $_GET['wpvt_timeline_filter'] != '') {
+			$query->query_vars['meta_key'] = 'wpvt_timeline_name';
+			$query->query_vars['meta_value'] = $_GET['wpvt_timeline_filter'];
+		}
+	}
+	add_filter( 'parse_query', 'wpvt_timeline_name_posts_filter' );
