@@ -76,7 +76,7 @@ Author URI: http://www.josheaton.org/
 			// Translation of invalid Unicode references range to valid range
 			$wp_htmltranswinuni = array(
 				'&#8211;' => '-',
-				'&#8212;' => '—',
+				'&#8212;' => 'Â—',
 				'&#8217;' => '\'',
 				'&#8218;' => ',',
 				'&#8220;' => '\"',
@@ -91,6 +91,16 @@ Author URI: http://www.josheaton.org/
 
 	/* Initailaize Back-end */
 	function wpvt_admin_init() {
+		//Get the upload dir path, and set the wpvt_jsons folder.
+		$upload_dir = wp_upload_dir();
+		$wpvt_jsons_dir = $upload_dir['basedir'].'/wpvt_jsons';
+
+		//Check if not a wpvt_jsons folder exists.
+		if (!is_dir ( $wpvt_jsons_dir ) ):
+			//Creating the folder wpvt_jsons folder where the jsons timeline files will be saved.
+			wp_mkdir_p( $wpvt_jsons_dir );
+		endif;
+
 		wp_register_script( 'veriteco', plugins_url('js/timeline-min.js', __FILE__) );
 
 		wp_register_script( 'wpvt_custom', plugins_url('js/wpvt_custom.js', __FILE__) );
@@ -363,6 +373,12 @@ Author URI: http://www.josheaton.org/
 				'nopaging'  => true,
 			);
 
+			//Get the timeline name, check if not empty before merge with args in WP_Query.
+			$wpvt_timeline_name = get_post_meta( $post_id, 'wpvt_timeline_name', true );
+			if(!empty($wpvt_timeline_name)) :
+				$args = array_merge($args, array('meta_key' => 'wpvt_timeline_name', 'meta_value' => $wpvt_timeline_name));
+			endif;
+
 			$loop = new WP_Query( $args );
 
 			while ( $loop->have_posts() ) :
@@ -378,7 +394,13 @@ Author URI: http://www.josheaton.org/
 				}
 			';
 
-			$jsonFile = plugin_dir_path( __FILE__ ) . "/timeline.json";
+			/*
+			 * Check if the timeline name is not empty, get the upload dir path and save this file in wpvt_jsons folder,
+			 * create a timeline json file with suffix "- the timeline id".
+			 */
+			$file = !empty($wpvt_timeline_name) ? "-".$wpvt_timeline_name : "";
+			$upload_dir = wp_upload_dir();
+			$jsonFile = $upload_dir['basedir']."/wpvt_jsons/timeline".$file.".json";
 			file_put_contents( $jsonFile, json_encode( $timeline_json ) );
 		}
 	}
