@@ -5,9 +5,7 @@ jQuery(document).ready(function($){
 
 	/**
 	 * Add a new timeline name, without refresh page.
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
 	 * @version 1.2.1 [23/10/2014 10:46:00]
-	 * @copyright 2014 Desenvolvimento Canção Nova
 	 * @param event event prevent refresh page
 	 * @var object data pass the values to jquery post
 	 */
@@ -35,9 +33,7 @@ jQuery(document).ready(function($){
 
 	/**
 	 * Adds "id" attribute to the default plugin shortcode with the selected option "value" from the stored timelines
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
 	 * @version 1.4.1 [29/10/2014 08:57:30]
-	 * @copyright 2014 Desenvolvimento Canção Nova
 	 * @param event event prevent refresh page
 	 * @var string option get the id attribute of the this selected element
 	 * @var object data pass the values to jquery post

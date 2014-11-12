@@ -92,13 +92,7 @@
 
 	/* Initailaize Back-end */
 	function wpvt_admin_init() {
-		
-		//Create timeline jsons folder in upload blog dir.
-		$upload_dir = wp_upload_dir();
-		wp_mkdir_p( $upload_dir['basedir'].'/wpvt_jsons');
-		
 		wp_register_script( 'veriteco', plugins_url('js/timeline-min.js', __FILE__) );
-
 		wp_register_script( 'wpvt_custom', plugins_url('js/wpvt_custom.js', __FILE__) );
 		wp_register_style( 'wpvt_css', plugins_url('css/wpvt.css', __FILE__) );
 
@@ -377,12 +371,6 @@
 				'nopaging'  => true,
 			);
 
-			$wpvt_timeline_name = get_post_meta( $post_id, 'wpvt_timeline_name', true );
-
-			if(!empty($wpvt_timeline_name)) {
-				$args = array_merge($args, array('meta_key' => 'wpvt_timeline_name', 'meta_value' => $wpvt_timeline_name));
-			}
-
 			$loop = new WP_Query( $args );
 
 			while ( $loop->have_posts() ) :
@@ -398,9 +386,7 @@
 				}
 			';
 
-			$file = !empty($wpvt_timeline_name)? "-".$wpvt_timeline_name : "";
-			$upload_dir = wp_upload_dir();
-			$jsonFile = $upload_dir['basedir']."/wpvt_jsons/timeline".$file.".json";
+			$jsonFile = plugin_dir_path( __FILE__ ) . "/timeline.json";
 			file_put_contents( $jsonFile, json_encode( $timeline_json ) );
 		}
 	}
@@ -416,13 +402,6 @@
 
 		//NOW I JUST NEED TO FETCH ALL THE POSTS, ARRANGE THE INFO INTO JSON THEN PRINT THE JAVASCRIPT CALL.
 		//MAYBE GO WITH THE OPTION OF WRITING INTO A SEPARATE JSON FILE SO WE DON'T QUERY EVERY TIME.
-		$upload_dir = wp_upload_dir();
-
-		if(array_key_exists("id",$atts)) {
-			$jsonfile = "/wpvt_jsons/timeline-".$atts["id"].".json";
-		} else {
-			$jsonfile = "/wpvt_jsons/timeline.json";
-		}
 
 		echo '
 			<div id="timeline-embed"></div>
@@ -430,7 +409,7 @@
 				var timeline_config = {
 					width: "'.$options['width'].'",
 					height: "'.$options['height'].'",
-					source: "'.$upload_dir['baseurl'].$jsonfile.'",
+					source: "'.plugins_url( 'timeline.json', __FILE__ ).'",
 					start_at_end: '.$start_at_end.',
 					hash_bookmark: '.$hash_bookmark.',
 					css: "'.plugins_url( 'css/themes/font/'.$options['fonts'].'.css', __FILE__ ).'"	//OPTIONAL
@@ -442,16 +421,8 @@
 	add_shortcode('WPVT', 'wpvt_sc_func');
 
 	/**
-	 * +---------------------------------------------------------------------------------------------+
-	 * | Copyright (c) 2014 Desenvolvimento Canção Nova                                              |
-	 * +---------------------------------------------------------------------------------------------+
-	*/
-
-	/**
 	 * Function to add a timeline name, and save in one serialize option
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
 	 * @version 1.1.0 [23/10/2014 09:58:30]
-	 * @copyright Desenvolvimento Canção Nova
 	 */
 	function add_new_timeline_name() {
 		if (!empty($_POST['wpvt_new_timeline_name'])) :
@@ -473,9 +444,7 @@
 
 	/**
 	 * Function to add a button, and show a pop-up with the option to select the timeline
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
 	 * @version 1.1.1 [23/10/2014 09:28:00]
-	 * @copyright Desenvolvimento Canção Nova
 	 * @param string $context html to create the button
 	 * @return string $context html to create the button
 	*/
@@ -518,9 +487,7 @@
 
 	/**
 	 * Function to send the id of timeline by ajax, and generate a shortcode that is inserted into the post content
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
 	 * @version 1.0.0 [23/10/2014 09:46:30]
-	 * @copyright Desenvolvimento Canção Nova
 	 */
 	function wpvt_insert_timeline_shortcode_ajax() {
 		//Calling the function to create the button.
@@ -533,9 +500,7 @@
 
 	/**
 	 * Function to create the timeline column.
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
 	 * @version 1.0.0 [23/10/2014 09:46:30]
-	 * @copyright Desenvolvimento Canção Nova 
 	 * @param object $columns
 	 * @return string
 	 */
@@ -552,9 +517,7 @@
 
 	/**
 	 * Function to display the name of the timeline.
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
 	 * @version 1.0.0 [23/10/2014 09:46:30]
-	 * @copyright Desenvolvimento Canção Nova 
 	 * @param object $column
 	 * @param int $post_id
 	 */	
@@ -572,9 +535,7 @@
 
 	/**
 	 * Function to enable timeline sortable columns.
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
 	 * @version 1.0.0 [23/10/2014 09:46:30]
-	 * @copyright Desenvolvimento Canção Nova 
 	 * @param unknown $columns
 	 * @return string
 	 */
@@ -586,9 +547,7 @@
 
 	/**
 	 * Function to enable timeline column order by.
-	 * @author Ewerton Luiz <ewerton@cancaonova.com>
 	 * @version 1.0.0 [23/10/2014 09:46:30]
-	 * @copyright Desenvolvimento Canção Nova 
 	 * @param unknown $query
 	 * @return unknown
 	 */
@@ -605,7 +564,6 @@
 
 	/**
 	 * First create the dropdown make sure to change POST_TYPE to the name of your custom post type
-	 * @author Ohad Raz
 	 * @return void
 	*/
 	function wpvt_timeline_name_select_filter() {
@@ -621,7 +579,7 @@
 		$timeline_names = get_option('wpvt_timeline_names'); 
 ?>
 		<select name="wpvt_timeline_filter">
-			<option value=""><?php _e('Filter Timeline By', 'acs'); ?></option>
+			<option value=""><?php _e('All Timeline Names', 'acs'); ?></option>
 <?php
 			$current_v = isset($_GET['wpvt_timeline_filter'])? $_GET['wpvt_timeline_filter']:'';
 			foreach ($timeline_names as $timeline_key => $timeline_value) {
@@ -640,7 +598,6 @@
 
 	/**
 	* if submitted filter by post meta make sure to change META_KEY to the actual meta key and POST_TYPE to the name of your custom post type
-	 * @author Ohad Raz
 	 * @param (wp_query object) $query
 	 * @return Void
 	 */
