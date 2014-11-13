@@ -92,6 +92,16 @@
 
 	/* Initailaize Back-end */
 	function wpvt_admin_init() {
+		//Get the plugin dir path, and set the wpvt_jsons folder.
+		$plugin_dir = plugin_dir_path( __FILE__ );
+		$wpvt_jsons_dir = $plugin_dir.'wpvt_jsons';
+
+		//Check if not a wpvt_jsons folder exists.
+		if (!is_dir ( $wpvt_jsons_dir ) ):
+			//Creating the folder wpvt_jsons folder where the jsons timeline files will be saved.
+			wp_mkdir_p( $wpvt_jsons_dir );
+		endif;
+
 		wp_register_script( 'veriteco', plugins_url('js/timeline-min.js', __FILE__) );
 		wp_register_script( 'wpvt_custom', plugins_url('js/wpvt_custom.js', __FILE__) );
 		wp_register_style( 'wpvt_css', plugins_url('css/wpvt.css', __FILE__) );
@@ -371,6 +381,12 @@
 				'nopaging'  => true,
 			);
 
+			//Get the timeline name, check if not empty before merge with args in WP_Query.
+			$wpvt_timeline_name = get_post_meta( $post_id, 'wpvt_timeline_name', true );
+			if(!empty($wpvt_timeline_name)) :
+				$args = array_merge($args, array('meta_key' => 'wpvt_timeline_name', 'meta_value' => $wpvt_timeline_name));
+			endif;
+
 			$loop = new WP_Query( $args );
 
 			while ( $loop->have_posts() ) :
@@ -386,7 +402,12 @@
 				}
 			';
 
-			$jsonFile = plugin_dir_path( __FILE__ ) . "/timeline.json";
+			/*
+			 * Check if the timeline name is not empty, get the plugin dir path and save this file in wpvt_jsons folder,
+			 * create a timeline json file with suffix "timeline-{the timeline id}.json".
+			*/
+			$file = !empty($wpvt_timeline_name) ? "-".$wpvt_timeline_name : "";
+			$jsonFile = plugin_dir_path( __FILE__ ) . "wpvt_jsons/timeline".$file.".json";
 			file_put_contents( $jsonFile, json_encode( $timeline_json ) );
 		}
 	}
@@ -403,13 +424,19 @@
 		//NOW I JUST NEED TO FETCH ALL THE POSTS, ARRANGE THE INFO INTO JSON THEN PRINT THE JAVASCRIPT CALL.
 		//MAYBE GO WITH THE OPTION OF WRITING INTO A SEPARATE JSON FILE SO WE DON'T QUERY EVERY TIME.
 
+		if(array_key_exists("id",$atts)) :
+			$jsonfile = "/wpvt_jsons/timeline-".$atts["id"].".json";
+		else :
+			$jsonfile = "/wpvt_jsons/timeline.json";
+		endif;
+
 		echo '
 			<div id="timeline-embed"></div>
 			<script type="text/javascript">
 				var timeline_config = {
 					width: "'.$options['width'].'",
 					height: "'.$options['height'].'",
-					source: "'.plugins_url( 'timeline.json', __FILE__ ).'",
+					source: "'.plugins_url( $jsonfile, __FILE__ ).'",
 					start_at_end: '.$start_at_end.',
 					hash_bookmark: '.$hash_bookmark.',
 					css: "'.plugins_url( 'css/themes/font/'.$options['fonts'].'.css', __FILE__ ).'"	//OPTIONAL
